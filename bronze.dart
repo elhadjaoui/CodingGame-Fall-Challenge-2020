@@ -85,6 +85,7 @@ void main() {
   Orders od;
   Spells sp;
   int i = 0;
+  bool bol = true;
   LearntSpells lsp;
   IngredientsNedded nedded = IngredientsNedded();
   myInventory inv;
@@ -121,66 +122,147 @@ void main() {
     return orders.last;
   }
 
-  Spells getBestSpell(List<Spells> spells, myInventory inv, Orders bestorder,
-      IngredientsNedded need) {
-    Spells ss = Spells(d0: 77);
+  Spells getBestSpell(List<Spells> spells, myInventory inv, Orders bestorder, IngredientsNedded need)
+  {
+  int rank = 1;
 
-    if (nedded.inv0 != 77) {
+//  stderr.writeln("nedded = ${nedded.inv0} ${nedded.inv1} ${nedded.inv2} ${nedded.inv3}");
+//  stderr.writeln("need = ${need.inv0} ${need.inv1} ${need.inv2} ${need.inv3}");
+
+    if (need.inv3 != 77) {
+      spells.sort((a,b) => a.d3.compareTo(b.d3));
+      spells.forEach((element) {
+        element.best += rank;
+        ++rank;
+      });
       for (Spells element in spells) {
-        if (element.d0 > 0) {
-          if (element.d0 + inv.inv0 >= 0 &&
-              element.d1 + inv.inv1 >= 0 &&
-              element.d2 + inv.inv2 >= 0 &&
-              element.d3 + inv.inv3 >= 0 &&
-              (inv.sum + element.sum) <= 10)
-          return element;
+        if (element.d0 >= 0 && element.d1 >= 0 && element.d2 >= 0 && element.d3 >= 0)
+          element.best += 20;
+        else
+        {
+          if (element.d3 > 0)
+            element.best +=5;
+          if (element.d0 > 0)
+            element.best +=1;
+          if (element.d2 > 0)
+            element.best +=1;
+          if (element.d0 > 0)
+            element.best +=1;
         }
       }
+      spells.sort((a,b) => a.best.compareTo(b.best));
+      if (spells.last.d1 + inv.inv1 >= 0 &&
+          spells.last.d0 + inv.inv0 >= 0 &&
+          spells.last.d2 + inv.inv2 >= 0 &&
+          spells.last.d3 + inv.inv3 >= 0 &&
+          (inv.sum + spells.last.sum) <= 10)
+        return spells.last;
+      else
+        return Spells(d0: 77);
     }
-
-    if (nedded.inv1 != 77) {
+    if (need.inv2 != 77) {
+      spells.sort((a,b) => a.d2.compareTo(b.d2));
+      spells.forEach((element) {
+        element.best += rank;
+        ++rank;
+      });
       for (Spells element in spells) {
-        if (element.d1 > 0) {
-          if (element.d1 + inv.inv1 >= 0 &&
-              element.d0 + inv.inv0 >= 0 &&
-              element.d2 + inv.inv2 >= 0 &&
-              element.d3 + inv.inv3 >= 0 &&
-              (inv.sum + element.sum) <= 10) 
-        return element;
+        if (element.d0 >= 0 && element.d1 >= 0 && element.d2 >= 0 && element.d3 >= 0)
+          element.best += 20;
+        else
+        {
+          if (element.d2 > 0)
+            element.best +=5;
+          if (element.d0 > 0)
+            element.best +=1;
+          if (element.d0 > 0)
+            element.best +=1;
+          if (element.d3 > 0)
+            element.best +=1;
         }
       }
-     
+      spells.sort((a,b) => a.best.compareTo(b.best));
+      if (spells.last.d1 + inv.inv1 >= 0 &&
+          spells.last.d0 + inv.inv0 >= 0 &&
+          spells.last.d2 + inv.inv2 >= 0 &&
+          spells.last.d3 + inv.inv3 >= 0 &&
+          (inv.sum + spells.last.sum) <= 10)
+        return spells.last;
+      else
+        return Spells(d0: 77);
     }
 
-    if (nedded.inv2 != 77) {
+    if (need.inv1 != 77) {
+
+      spells.sort((a,b) => a.d1.compareTo(b.d1));
+      spells.forEach((element) {
+        element.best += rank;
+        ++rank;
+      });
       for (Spells element in spells) {
-        if (element.d2 > 0) {
-          if (element.d1 + inv.inv1 >= 0 &&
-              element.d0 + inv.inv0 >= 0 &&
-              element.d2 + inv.inv2 >= 0 &&
-              element.d3 + inv.inv3 >= 0 &&
-              (inv.sum + element.sum) <= 10) 
-       return element;
+        if (element.d0 >= 0 && element.d1 >= 0 && element.d2 >= 0 && element.d3 >= 0)
+          element.best += 20;
+        else
+        {
+          if (element.d1 > 0)
+            element.best +=5;
+          if (element.d0 > 0)
+            element.best +=1;
+          if (element.d2 > 0)
+            element.best +=1;
+          if (element.d3 > 0)
+            element.best +=1;
         }
       }
+      spells.sort((a,b) => a.best.compareTo(b.best));
+      if (spells.last.d1 + inv.inv1 >= 0 &&
+          spells.last.d0 + inv.inv0 >= 0 &&
+          spells.last.d2 + inv.inv2 >= 0 &&
+          spells.last.d3 + inv.inv3 >= 0 &&
+          (inv.sum + spells.last.sum) <= 10)
+        return spells.last;
+      else
+        return Spells(d0: 77);
+
     }
 
-    if (nedded.inv3 != 77) {
+    if (need.inv0 != 77) {
+
+      spells.sort((a,b) => a.d0.compareTo(b.d0));
+      spells.forEach((element) {
+        element.best += rank;
+        ++rank;
+      });
       for (Spells element in spells) {
-        if (element.d3 > 0) {
-          if (element.d1 + inv.inv1 >= 0 &&
-              element.d0 + inv.inv0 >= 0 &&
-              element.d2 + inv.inv2 >= 0 &&
-              element.d3 + inv.inv3 >= 0 &&
-              (inv.sum + element.sum) <= 10)
-       return element;
+        if (element.d0 >= 0 && element.d1 >= 0 && element.d2 >= 0 && element.d3 >= 0)
+          element.best += 20;
+        else
+            {
+              if (element.d0 > 0)
+                element.best +=5;
+              if (element.d1 > 0)
+                element.best +=1;
+              if (element.d2 > 0)
+                element.best +=1;
+              if (element.d3 > 0)
+                element.best +=1;
+            }
         }
+            spells.sort((a,b) => a.best.compareTo(b.best));
+      if (spells.last.d1 + inv.inv1 >= 0 &&
+          spells.last.d0 + inv.inv0 >= 0 &&
+          spells.last.d2 + inv.inv2 >= 0 &&
+          spells.last.d3 + inv.inv3 >= 0 &&
+          (inv.sum + spells.last.sum) <= 10)
+        return spells.last;
+      else
+        return Spells(d0: 77);
+
       }
-     
-    }
+
     getFirstLSP(addlearnetSpells);
-    //stderr.writeln("best sp = ${ss.id} ${ss.d0} ${ss.d1} ${ss.d2} ${ss.d3}");
-    return ss;
+    stderr.writeln("pppppppppppp");
+    return Spells(d0: 77);
 
     // return element;
   }
@@ -272,26 +354,41 @@ void main() {
     stderr.writeln("${inv.inv0} ${inv.inv1} ${inv.inv2} ${inv.inv3}");
     stderr
         .writeln("${nedded.inv0} ${nedded.inv1} ${nedded.inv2} ${nedded.inv3}");
-    stderr.writeln("${od.id} ${od.d0} ${od.d1} ${od.d2} ${od.d3}");
+    stderr.writeln("${od.id} ${od.d0} ${od.d1} ${od.d2} ${od.d3} ${od.price}");
 
-    if (inv.inv0 + od.d0 >= 0 &&
-        inv.inv1 + od.d1 >= 0 &&
-        inv.inv2 + od.d2 >= 0 &&
-        inv.inv3 + od.d3 >= 0) {
-      print('BREW ${od.id}');
-    } else {
-      if (i < 6)
-        getFirstLSP(addlearnetSpells);
-      else {
-        sp = getBestSpell(addSpells, inv, od, nedded);
-        if (sp.d0 != 77) {
-          if (sp.castable == 0)
-            print('REST');
-          else
-            print('CAST ${sp.id}');
+    for (Orders element in addOrders) {
+      if (inv.inv0 + element.d0 >= 0 &&
+          inv.inv1 + element.d1 >= 0 &&
+          inv.inv2 + element.d2 >= 0 &&
+          inv.inv3 + element.d3 >= 0)
+        {
+          print('BREW ${element.id}');
+           bol = false;
+           break;
         }
-      }
     }
+
+    if (bol)
+      {
+          if (i < 10)
+            getFirstLSP(addlearnetSpells);
+          else {
+            sp = getBestSpell(addSpells, inv, od, nedded);
+            if (sp.d0 != 77) {
+              if (sp.castable == 0)
+                print('REST');
+              else
+                print('CAST ${sp.id}');
+            }
+            else
+            {
+              stderr.writeln("nôo");
+              print('WAIT');
+            }
+
+          }
+      }
+
     addOrders.clear();
     addSpells.clear();
     addlearnetSpells.clear();
