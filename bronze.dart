@@ -82,6 +82,7 @@ void main() {
   List<Orders> addOrders = List();
   List<Spells> addSpells = List();
   List<Spells> goodSpells = List();
+  List<Spells> badSpells = List();
   List<LearntSpells> addlearnetSpells = List();
   Orders od;
   Spells sp;
@@ -102,12 +103,6 @@ void main() {
   Orders getBestOrder(List<Orders> orders, myInventory inv) {
     int scoreforTime = 5;
     int scoreforPrice = 1;
-    /*  orders.forEach((element) {
-      if (element.d0 > inv.inv0 ||
-          element.d1 > inv.inv1 ||
-          element.d2 > inv.inv2 ||
-          element.d3 > inv.inv3) orders.remove(element);
-    });*/
     orders.sort((a, b) => a.time.compareTo(b.time));
     orders.forEach((element) {
       element.best += scoreforTime;
@@ -124,137 +119,274 @@ void main() {
     return orders.last;
   }
 
-  Spells getBestSpell(List<Spells> spells, myInventory inv, Orders bestorder, IngredientsNedded need)
+  Spells getBestSpell(List<Spells> spells, myInventory inv,
+      IngredientsNedded need)
   {
-  Spells ss  = Spells(d0: 77);
+    int rank = 1;
+    Spells ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
+    goodSpells.clear();
+    badSpells.clear();
 
-//  stderr.writeln("nedded = ${nedded.inv0} ${nedded.inv1} ${nedded.inv2} ${nedded.inv3}");
-//  stderr.writeln("need = ${need.inv0} ${need.inv1} ${need.inv2} ${need.inv3}");
-
-    if (need.inv3 != 77) {
+    if (need.inv0 != 77) {
       spells.forEach((element) {
-        if (element.d3 > 0)
-        {
-          if (inv.inv1 + element.d1 >= 0 && inv.inv2 + element.d2 >= 0 && inv.inv0 + element.d0 >= 0 && (inv.sum + element.sum) <= 10)
-          {
+        if (element.d0 > 0) {
+          if (inv.inv1 + element.d1 >= 0 &&
+              inv.inv2 + element.d2 >= 0 &&
+              inv.inv3 + element.d3 >= 0 &&
+              (inv.sum + element.sum) <= 10) {
             if (element.castable == 1)
-              element.best += 5;
+              element.best += 10;
+            if (element.d1 > 0) element.best += 5;
+            if (element.d3 > 0) element.best += 5;
+            if (element.d2 > 0) element.best += 5;
+            if (element.d2 == 0 && element.d3 == 0 && element.d1 ==0)
+              element.best += 10;
             goodSpells.add(element);
           }
+          else {
+            if (element.castable == 1) element.best += 5;
+            if (element.d1 > 0) element.best += 1;
+            if (element.d3 > 0) element.best += 1;
+            if (element.d2 > 0) element.best += 1;
+            badSpells.add(element);
+          }
         }
-
       });
-
-      if (goodSpells.length == 0)
-        ss =  getBestSpell(spells, inv, bestorder, need);
-      else
-        {
-          goodSpells.sort((a,b) => a.best.compareTo(b.best));
+      if (goodSpells.length != 0)
+      {
+        goodSpells.sort((a, b) => a.d0.compareTo(b.d0));
+        goodSpells.forEach((element) {
+          element.best += rank;
+          ++rank;
+        });
+        goodSpells.sort((a, b) => a.best.compareTo(b.best));
           ss = goodSpells.last;
-
-        }
-
-    }
-
-     else if (need.inv2 != 77) {
-      spells.forEach((element) {
-        if (element.d2 > 0)
+      }
+      else if (badSpells.length != 0)
         {
-          if (inv.inv1 + element.d1 >= 0 && inv.inv0 + element.d0 >= 0 && inv.inv3 + element.d3 >= 0 && (inv.sum + element.sum) <= 10)
-          {
-
-            if (element.castable == 1)
-              element.best += 5;
+          badSpells.sort((a, b) => a.d0.compareTo(b.d0));
+          badSpells.forEach((element) {
+            element.best += rank;
+            ++rank;
+          });
+          badSpells.sort((a, b) => a.best.compareTo(b.best));
+          newNeed.inv0 = (inv.inv0 + badSpells.last.d0 >= 0)
+              ? 77
+              : inv.inv0 + badSpells.last.d0;
+          newNeed.inv1 = (inv.inv1 + badSpells.last.d1 >= 0)
+              ? 77
+              : inv.inv1 + badSpells.last.d1;
+          newNeed.inv2 = (inv.inv2 + badSpells.last.d2 >= 0)
+              ? 77
+              : inv.inv2 + badSpells.last.d2;
+          newNeed.inv3 = (inv.inv3 + badSpells.last.d3 >= 0)
+              ? 77
+              : inv.inv3 + badSpells.last.d3;
+          ss = getBestSpell(spells, inv,  newNeed);
+        }
+    }
+    else if (need.inv1 != 77) {
+      spells.forEach((element) {
+        if (element.d1 > 0) {
+          stderr.write("sdfghsfhs");
+          if (inv.inv0 + element.d0 >= 0 &&
+              inv.inv2 + element.d2 >= 0 &&
+              inv.inv3 + element.d3 >= 0 &&
+              (inv.sum + element.sum) <= 10) {
+            if (element.castable == 1) element.best += 10;
+            if (element.d0 > 0) element.best += 5;
+            if (element.d3 > 0) element.best += 5;
+            if (element.d2 > 0) element.best += 5;
+            if (element.d2 == 0 && element.d3 == 0 && element.d0 ==0)
+              element.best += 10;
             goodSpells.add(element);
           }
-
-        }
-
-      });
-      goodSpells.sort((a,b) => a.best.compareTo(b.best));
-
-      if (goodSpells.length == 0)
-        ss =  Spells(d0: 77);
-      else
-      {
-        goodSpells.sort((a,b) => a.best.compareTo(b.best));
-        ss = goodSpells.last;
-
-      }
-    }
-
-     else if (need.inv1 != 77) {
-
-      spells.forEach((element) {
-        if (element.d1 > 0)
-        {
-          if (inv.inv0 + element.d0 >= 0 && inv.inv2 + element.d2 >= 0 && inv.inv3 + element.d3 >= 0 && (inv.sum + element.sum) <= 10)
-          {
-            if (element.castable == 1)
-              element.best += 5;
+          else {
+            if (element.castable == 1) element.best += 5;
+            if (element.d0 > 0) element.best += 1;
+            if (element.d3 > 0) element.best += 1;
+            if (element.d2 > 0) element.best += 1;
             goodSpells.add(element);
           }
-
         }
-
       });
-      goodSpells.sort((a,b) => a.best.compareTo(b.best));
 
       if (goodSpells.length == 0)
-        ss =  Spells(d0: 77);
-      else
-      {
-        goodSpells.sort((a,b) => a.best.compareTo(b.best));
-        ss = goodSpells.last;
+        ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
+      else {
+        goodSpells.sort((a, b) => a.d1.compareTo(b.d1));
+        goodSpells.forEach((element) {
+          element.best += rank;
+          ++rank;
+        });
+        goodSpells.sort((a, b) => a.best.compareTo(b.best));
+        if (inv.inv1 + goodSpells.last.d1 >= 0 &&
+            inv.inv2 + goodSpells.last.d2 >= 0 &&
+            inv.inv0 + goodSpells.last.d0 >= 0 &&
+            (inv.sum + goodSpells.last.sum) <= 10)
+          ss = goodSpells.last;
+        else if ((inv.sum + goodSpells.last.sum) <= 10) {
+          print("hhhhhhhere 11");
+          newNeed.inv0 = (inv.inv0 + goodSpells.last.d0 >= 0)
+              ? 77
+              : inv.inv0 + goodSpells.last.d0;
+          newNeed.inv1 = (inv.inv1 + goodSpells.last.d1 >= 0)
+              ? 77
+              : inv.inv1 + goodSpells.last.d1;
+          newNeed.inv2 = (inv.inv2 + goodSpells.last.d2 >= 0)
+              ? 77
+              : inv.inv2 + goodSpells.last.d2;
+          newNeed.inv3 = (inv.inv3 + goodSpells.last.d3 >= 0)
+              ? 77
+              : inv.inv3 + goodSpells.last.d3;
+          stderr.writeln(" 1  = ${need.inv0} ${need.inv1} ${need.inv2} ${need.inv3}");
+          ss = getBestSpell(spells, inv,  newNeed);
+          stderr.writeln(" ss 1  = ${ss.d0} ${ss.d1} ${ss.d2} ${ss.d3}");
+        }
 
+        else
+          ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
       }
     }
 
-   else if (need.inv0 != 77) {
+    else if (need.inv2 != 77) {
 
       spells.forEach((element) {
-        if (element.d0 > 0)
-          {
-            if (inv.inv1 + element.d1 >= 0 && inv.inv2 + element.d2 >= 0 && inv.inv3 + element.d3 >= 0 && (inv.sum + element.sum) <= 10)
-              {
-                if (element.castable == 1)
-                  element.best += 5;
-                goodSpells.add(element);
-              }
-
+        if (element.d2 > 0) {
+          if (inv.inv1 + element.d1 >= 0 &&
+              inv.inv0 + element.d0 >= 0 &&
+              inv.inv3 + element.d3 >= 0 &&
+              (inv.sum + element.sum) <= 10) {
+            if (element.castable == 1)
+              element.best += 10;
+            if (element.d0 > 0) element.best += 5;
+            if (element.d3 > 0) element.best += 5;
+            if (element.d1 > 0) element.best += 5;
+            if (element.d1 == 0 && element.d3 == 0 && element.d0 ==0) element.best += 10;
+            goodSpells.add(element);
           }
-
+          else {
+            if (element.castable == 1) element.best += 5;
+            if (element.d0 > 0) element.best += 1;
+            if (element.d3 > 0) element.best += 1;
+            if (element.d1 > 0) element.best += 1;
+            goodSpells.add(element);
+          }
+        }
       });
-      goodSpells.sort((a,b) => a.best.compareTo(b.best));
 
       if (goodSpells.length == 0)
-        ss =  Spells(d0: 77);
-      else
-      {
-        goodSpells.sort((a,b) => a.best.compareTo(b.best));
-        ss = goodSpells.last;
+        ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
+      else {
 
+        goodSpells.sort((a, b) => a.d2.compareTo(b.d2));
+        goodSpells.forEach((element) {
+          element.best += rank;
+          ++rank;
+        });
+        goodSpells.sort((a, b) => a.best.compareTo(b.best));
+        if (inv.inv1 + goodSpells.last.d1 >= 0 &&
+            inv.inv2 + goodSpells.last.d2 >= 0 &&
+            inv.inv0 + goodSpells.last.d0 >= 0 &&
+            (inv.sum + goodSpells.last.sum) <= 10)
+          {
+            ss = goodSpells.last;
+          }
+
+        else if ((inv.sum + goodSpells.last.sum) <= 10) {
+          stderr.write("hhhhhhhere 22");
+          newNeed.inv0 = (inv.inv0 + goodSpells.last.d0 >= 0)
+              ? 77
+              : inv.inv0 + goodSpells.last.d0;
+          newNeed.inv1 = (inv.inv1 + goodSpells.last.d1 >= 0)
+              ? 77
+              : inv.inv1 + goodSpells.last.d1;
+          newNeed.inv2 = (inv.inv2 + goodSpells.last.d2 >= 0)
+              ? 77
+              : inv.inv2 + goodSpells.last.d2;
+          newNeed.inv3 = (inv.inv3 + goodSpells.last.d3 >= 0)
+              ? 77
+              : inv.inv3 + goodSpells.last.d3;
+          stderr.writeln(" 2 = ${need.inv0} ${need.inv1} ${need.inv2} ${need.inv3}");
+          ss = getBestSpell(spells, inv, newNeed);
+          stderr.writeln(" ss 2  = ${ss.d0} ${ss.d1} ${ss.d2} ${ss.d3}");
+        }
+        else
+          ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
       }
+    }
 
+
+    else if (need.inv3 != 77) {
+      spells.forEach((element) {
+        if (element.d3 > 0) {
+          if (inv.inv1 + element.d1 >= 0 &&
+              inv.inv2 + element.d2 >= 0 &&
+              inv.inv0 + element.d0 >= 0 &&
+              (inv.sum + element.sum) <= 10) {
+            if (element.castable == 1) element.best += 10;
+            if (element.d0 > 0) element.best += 5;
+            if (element.d2 > 0) element.best += 5;
+            if (element.d1 > 0) element.best += 5;
+            if (element.d2 == 0 && element.d1 == 0 && element.d0 ==0) element.best += 10;
+            goodSpells.add(element);
+          }
+          else {
+            if (element.castable == 1) element.best += 5;
+            if (element.d0 > 0) element.best += 1;
+            if (element.d2 > 0) element.best += 1;
+            if (element.d1 > 0) element.best += 1;
+            goodSpells.add(element);
+          }
+        }
+      });
+
+      if (goodSpells.length == 0) {
+        ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
+      } else {
+        goodSpells.sort((a, b) => a.d3.compareTo(b.d3));
+        goodSpells.forEach((element) {
+          element.best += rank;
+          ++rank;
+        });
+        goodSpells.sort((a, b) => a.best.compareTo(b.best));
+        if (inv.inv1 + goodSpells.last.d1 >= 0 &&
+            inv.inv2 + goodSpells.last.d2 >= 0 &&
+            inv.inv0 + goodSpells.last.d0 >= 0 &&
+            (inv.sum + goodSpells.last.sum) <= 10)
+          ss = goodSpells.last;
+        else if ((inv.sum + goodSpells.last.sum) <= 10) {
+          print("hhhhhhhere 333");
+          newNeed.inv0 = (inv.inv0 + goodSpells.last.d0 >= 0)
+              ? 77
+              : inv.inv0 + goodSpells.last.d0;
+          newNeed.inv1 = (inv.inv1 + goodSpells.last.d1 >= 0)
+              ? 77
+              : inv.inv1 + goodSpells.last.d1;
+          newNeed.inv2 = (inv.inv2 + goodSpells.last.d2 >= 0)
+              ? 77
+              : inv.inv2 + goodSpells.last.d2;
+          newNeed.inv3 = (inv.inv3 + goodSpells.last.d3 >= 0)
+              ? 77
+              : inv.inv3 + goodSpells.last.d3;
+          stderr.writeln(" 3  = ${need.inv0} ${need.inv1} ${need.inv2} ${need.inv3}");
+          ss = getBestSpell(spells, inv,  newNeed);
+          stderr.writeln(" ss 3  = ${ss.d0} ${ss.d1} ${ss.d2} ${ss.d3}");
+        }
+        else
+          ss = Spells(d0: 77,d1: 77,d2: 77,d3: 77);
       }
+    }
 
-
+    stderr.writeln(" ss   = ${ss.d0} ${ss.d1} ${ss.d2} ${ss.d3}");
     return ss;
 
     // return element;
   }
 
-  /*  LearntSpells getBestLsp(List<LearntSpells> lsp, myInventory inv, Orders bestorder, IngredientsNedded need)
-  {
-    if (nedded.inv0 != 77) {
-      lsp.sort((a, b) => a.d0.compareTo(b.d0));
-      if (lsp.last.d0 + inv.inv0 >= 0 && (inv.sum + lsp.last.mmax) <= 10)
-        return lsp.last;
-    }
-  }*/
-
   // game loop
   while (true) {
+    bol = true;
     int actionCount = int.parse(
         stdin.readLineSync()); // the number of spells and recipes in play
     for (int i = 0; i < actionCount; i++) {
@@ -329,44 +461,39 @@ void main() {
     nedded.inv2 = (inv.inv2 + od.d2 >= 0) ? 77 : inv.inv2 + od.d2;
     nedded.inv3 = (inv.inv3 + od.d3 >= 0) ? 77 : inv.inv3 + od.d3;
     stderr.writeln("${inv.inv0} ${inv.inv1} ${inv.inv2} ${inv.inv3}");
-    stderr
-        .writeln("${nedded.inv0} ${nedded.inv1} ${nedded.inv2} ${nedded.inv3}");
+    stderr.writeln("${nedded.inv0} ${nedded.inv1} ${nedded.inv2} ${nedded.inv3}");
     stderr.writeln("${od.id} ${od.d0} ${od.d1} ${od.d2} ${od.d3} ${od.price}");
 
+    for (Orders element in addOrders) {
+      if (inv.inv0 + element.d0 >= 0 &&
+          inv.inv1 + element.d1 >= 0 &&
+          inv.inv2 + element.d2 >= 0 &&
+          inv.inv3 + element.d3 >= 0) {
+        print('BREW ${element.id}');
+        bol = false;
+        break;
+      }
+    }
 
-    for (Orders element in addOrders)
-      {
-        if (inv.inv0 + element.d0 >= 0 &&
-            inv.inv1 + element.d1 >= 0 &&
-            inv.inv2 + element.d2 >= 0 &&
-            inv.inv3 + element.d3 >= 0)
-        {
-          print('BREW ${element.id}');
-          bol = false;
-          break;
+    if (bol) {
+      if (i < 10)
+        getFirstLSP(addlearnetSpells);
+      else {
+        sp = getBestSpell(addSpells, inv, nedded);
+        if (sp.d0 != 77) {
+          if (sp.castable == 0)
+            print('REST');
+          else
+            print('CAST ${sp.id}');
+        } else {
+          if (addlearnetSpells.length != 0)
+          print("LEARN ${addlearnetSpells.first.id}");
+          else
+            print("WAIT");
+          stderr.writeln("here [][][][][]");
         }
       }
-
-   if (bol)
-      {
-          if (i < 10)
-            getFirstLSP(addlearnetSpells);
-          else {
-            sp = getBestSpell(addSpells, inv, od, nedded);
-            if (sp.d0 != 77) {
-              if (sp.castable == 0)
-                print('REST');
-              else
-                print('CAST ${sp.id}');
-            }
-            else
-              {
-                print("LEARN ${addlearnetSpells.first.id}");
-                stderr.writeln("here [][][][][]");
-
-              }
-          }
-      }
+    }
 
     addOrders.clear();
     addSpells.clear();
